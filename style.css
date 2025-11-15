@@ -18,27 +18,29 @@ html, body {
   margin: 0;
   padding: 0;
 
-  /* Fixed content box inside the iframe */
-  width: 440px;          /* overall content width */
-  height: 300px;         /* 👈 shaved down height */
+  /* Let the content match the Notion column width */
+  width: 100%;
+  height: 340px;         /* a bit shorter than before */
+
   font-family: system-ui, -apple-system, "SF Pro Text", Segoe UI, sans-serif;
   background: transparent;
-  overflow: hidden;      /* no internal scrollbars */
+  overflow: hidden;
 
+  /* Center everything inside the iframe */
   display: flex;
-justify-content: center;   /* centers the .wrap horizontally */
-align-items: center;       /* centers .wrap vertically */
+  justify-content: center;   /* horizontal center */
+  align-items: center;       /* vertical center */
 }
 
-/* Center the chart nicely in the embed block */
+/* Wrapper that holds glow + stars + chart */
 .wrap {
   position: relative;
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;   /* horizontal center */
-  align-items: center;       /* vertical center */
-  padding: 0;                /* remove extra space */
+  justify-content: center;    /* center chart horizontally */
+  align-items: center;        /* center chart vertically */
+  padding: 0;
 }
 
 /* soft glitter haze behind the chart, just beyond the stats */
@@ -46,7 +48,7 @@ align-items: center;       /* centers .wrap vertically */
   content: "";
   position: absolute;
 
-  width: 300px;          /* slightly tighter glow to match smaller height */
+  width: 300px;          /* glow sized for slightly larger chart */
   height: 300px;
 
   top: 50%;
@@ -66,13 +68,13 @@ align-items: center;       /* centers .wrap vertically */
   );
 }
 
-/* Chart sizing – fixed so it doesn't grow/shrink with columns */
+/* Chart – fixed visual size, centered */
 #radarChart {
   position: relative;
   z-index: 1;
 
-  width: 340px;          /* 👈 slightly smaller so it fits comfortably */
-  height: 340px;
+  width: 330px;          /* a bit bigger than before */
+  height: 330px;
   max-width: none;
   max-height: none;
   margin: 0 auto;
@@ -88,7 +90,7 @@ align-items: center;       /* centers .wrap vertically */
   animation: twinkle 2.5s infinite ease-in-out;
 }
 
-/* slight variation by position */
+/* animation speed variations */
 .star:nth-child(1) { animation-duration: 2.6s; }
 .star:nth-child(2) { animation-duration: 3.0s; }
 .star:nth-child(3) { animation-duration: 2.3s; }
