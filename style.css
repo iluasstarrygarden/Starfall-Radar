@@ -25,41 +25,51 @@ html, body {
 /* Center the chart nicely in the embed block */
 .wrap {
   position: relative;
-  min-height: 100%;
+  width: 100%;
+  height: auto;
+  padding: 20px 12px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 8px 12px;
+  align-items: center;
 }
 
 /* soft glitter haze behind the chart, just beyond the stats */
 .wrap::before {
   content: "";
   position: absolute;
-  width: 320px;        /* tighter circle */
-  height: 320px;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
+
+  /* Glow now scales with the chart container */
+  width: 60%;
+  height: 60%;
+
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+
+  opacity: 0.9; /* ← YES, you can keep this */
+
   background: radial-gradient(
     circle,
-    rgba(255, 188, 141, 0.33) 0%,
+    rgba(255, 188, 141, 0.32) 0%,
     rgba(255, 224, 197, 0.18) 45%,
-    rgba(255, 224, 197, 0.0) 72%
+    rgba(255, 224, 197, 0) 75%
   );
-  opacity: 0.9;
 }
 
 /* Chart sizing – tweak max-width if you want it bigger/smaller */
 #radarChart {
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 480px;   /* bigger chart */
-  max-height: 480px;
+
+  width: 100%;       /* fill entire embed width */
+  height: auto;      /* scale proportionally */
+
+  max-width: none;   /* remove hard limits */
+  max-height: none;
 }
 
 /* tiny twinkling stars */
