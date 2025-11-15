@@ -19,14 +19,18 @@ html, body {
   padding: 0;
   height: 100%;
   font-family: system-ui, -apple-system, "SF Pro Text", Segoe UI, sans-serif;
-  background: var(--bg);
+  background: transparent;
+
+  /* ❗ Fixed content width so the chart never shrinks */
+  width: 440px;        /* overall content width */
+  overflow: auto;      /* adds internal scroll if Notion column is narrower */
 }
 
 /* Center the chart nicely in the embed block */
 .wrap {
   position: relative;
   width: 100%;
-  min-height: 340px;    /* enough tall space for the chart */
+  min-height: 360px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -38,9 +42,8 @@ html, body {
   content: "";
   position: absolute;
 
-  /* Glow now scales with the chart container */
-  width: 70%;
-  height: 70%;
+  width: 320px;
+  height: 320px;
 
   top: 50%;
   left: 50%;
@@ -49,8 +52,7 @@ html, body {
   border-radius: 50%;
   z-index: 0;
   pointer-events: none;
-
-  opacity: 0.9; /* ← YES, you can keep this */
+  opacity: 0.9;
 
   background: radial-gradient(
     circle,
@@ -64,10 +66,11 @@ html, body {
 #radarChart {
   position: relative;
   z-index: 1;
-  width: 100%;
-  height: auto;
-  max-width: 420px;     /* visual size cap */
-  max-height: 420px;
+
+  width: 380px;
+  height: 380px;
+  max-width: none;
+  max-height: none;
   margin: 0 auto;
 }
 
