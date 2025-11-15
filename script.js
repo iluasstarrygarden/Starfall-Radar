@@ -7,6 +7,20 @@ async function fetchStats() {
 function createRadarChart(labels, values) {
   const ctx = document.getElementById("radarChart").getContext("2d");
 
+  // 1) Find the highest stat value you currently have
+  const rawMax = Math.max(...values, 0);
+
+  // 2) Choose a "nice" upper bound, capped at 500
+  let chartMax;
+  if (rawMax <= 10) chartMax = 10;
+  else if (rawMax <= 25) chartMax = 25;
+  else if (rawMax <= 50) chartMax = 50;
+  else if (rawMax <= 100) chartMax = 100;
+  else if (rawMax <= 200) chartMax = 200;
+  else if (rawMax <= 300) chartMax = 300;
+  else if (rawMax <= 400) chartMax = 400;
+  else chartMax = 500; // hard cap
+
   new Chart(ctx, {
     type: "radar",
     data: {
@@ -16,9 +30,9 @@ function createRadarChart(labels, values) {
           label: "Current Stat Points",
           data: values,
           fill: true,
-          backgroundColor: "rgba(255, 188, 141, 0.22)",   // soft peach glow
-          borderColor: "#d98a52",                          // deeper peach outline
-          pointBackgroundColor: "#d98a52",                 // warm points
+          backgroundColor: "rgba(255, 188, 141, 0.22)",  // soft peach glow
+          borderColor: "#d98a52",                         // deeper peach outline
+          pointBackgroundColor: "#d98a52",                // warm points
           pointBorderColor: "#fff7ee",
           pointHoverRadius: 5,
           borderWidth: 2
@@ -28,7 +42,7 @@ function createRadarChart(labels, values) {
     options: {
       responsive: true,
       maintainAspectRatio: true,
-      
+
       plugins: {
         legend: { display: false }
       },
@@ -41,19 +55,20 @@ function createRadarChart(labels, values) {
       },
       scales: {
         r: {
+          min: 0,
+          max: chartMax,  // 👈 dynamic, up to 500
+
           angleLines: {
-            color: "rgba(255, 221, 189, 0.7)"             // very soft lines
+            color: "rgba(255, 221, 189, 0.7)"           // very soft lines
           },
           grid: {
-            color: "rgba(255, 224, 197, 0.55)"            // light peach rings
+            color: "rgba(255, 224, 197, 0.55)"          // light peach rings
           },
-          suggestedMin: 0,
-          suggestedMax: Math.max(5, ...values) + 1,
           ticks: {
             display: false
           },
           pointLabels: {
-            color: "#64473a",                              // Notion brown labels
+            color: "#64473a",                            // Notion brown labels
             font: {
               size: 11,
               weight: "600"
