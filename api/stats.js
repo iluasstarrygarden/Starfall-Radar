@@ -60,12 +60,33 @@ export default async function handler(req, res) {
       }
 
       let value = 0;
-      if (pointsProp && pointsProp.type === "number") {
-        value = pointsProp.number || 0;
-      }
+      if (pointsProp) {
+  // Plain number property
+  if (pointsProp.type === "number") {
+    value = pointsProp.number ?? 0;
+  }
 
-      labels.push(label);
-      values.push(value);
+  // Formula returning a number
+  else if (
+    pointsProp.type === "formula" &&
+    pointsProp.formula &&
+    pointsProp.formula.type === "number"
+  ) {
+    value = pointsProp.formula.number ?? 0;
+  }
+
+  // Rollup returning a number
+  else if (
+    pointsProp.type === "rollup" &&
+    pointsProp.rollup &&
+    pointsProp.rollup.type === "number"
+  ) {
+    value = pointsProp.rollup.number ?? 0;
+  }
+}
+
+labels.push(label);
+values.push(value);
     }
 
     return res.status(200).json({ labels, values });
