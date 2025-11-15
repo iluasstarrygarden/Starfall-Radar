@@ -26,11 +26,11 @@ html, body {
 .wrap {
   position: relative;
   width: 100%;
-  height: auto;
-  padding: 20px 12px;
+  min-height: 340px;    /* enough tall space for the chart */
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 16px 12px;
 }
 
 /* soft glitter haze behind the chart, just beyond the stats */
@@ -64,10 +64,9 @@ html, body {
 #radarChart {
   position: relative;
   z-index: 1;
-
   width: 100%;
   height: auto;
-  max-width: 420px;   /* or 380–420 depending on what looks nicest */
+  max-width: 420px;     /* visual size cap */
   max-height: 420px;
   margin: 0 auto;
 }
