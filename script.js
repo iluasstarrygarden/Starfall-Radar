@@ -42,6 +42,7 @@ function createRadarChart(labels, values) {
     options: {
       responsive: true,
       maintainAspectRatio: true,
+      aspectRatio: 1,
 
       plugins: {
         legend: { display: false }
