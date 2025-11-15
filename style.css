@@ -1,14 +1,13 @@
 :root {
-  /* Ilua / Starfall palette */
-  --bg: #fff5ec;
-  --card: #ffe0c5;
-  --accent: #ffb16a;
-  --accent-soft: #ffc485;
-  --line: #6ab8ff;
-  --text-main: #5a3a2a;
-  --text-soft: #8b6b57;
+  /* Golden Academia / Ilua palette */
+  --bg: transparent;          /* let Notion’s white show through */
+  --peach-soft: #ffe0c5;
+  --peach-mid: #ffc485;
+  --peach-deep: #ffb16a;
+  --brown-text: #64473a;      /* Notion brown text colour */
 }
 
+/* Reset / base */
 *,
 *::before,
 *::after {
@@ -20,44 +19,21 @@ html, body {
   padding: 0;
   height: 100%;
   font-family: system-ui, -apple-system, "SF Pro Text", Segoe UI, sans-serif;
-  background: radial-gradient(circle at top left, #ffe8d0 0, #fff5ec 40%, #ffffff 100%);
+  background: var(--bg);
 }
 
+/* Center the chart nicely in the embed block */
 .wrap {
   min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 8px 12px;
 }
 
-.card {
-  background: var(--card);
-  border-radius: 18px;
-  padding: 18px 22px 22px;
-  box-shadow: 0 12px 30px rgba(177, 128, 96, 0.32);
-  max-width: 420px;
-  width: 100%;
-  border: 1px solid rgba(255, 177, 106, 0.35);
-}
-
-.title {
-  margin: 0 0 12px 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--text-main);
-}
-
+/* Chart sizing – tweak max-width if you want it bigger/smaller */
 #radarChart {
   width: 100%;
-  max-height: 320px;
-}
-
-.note {
-  margin: 10px 0 0;
-  font-size: 0.75rem;
-  color: var(--text-soft);
-  text-align: right;
+  max-width: 340px;
+  max-height: 340px;
 }
