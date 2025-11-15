@@ -16,10 +16,10 @@ function createRadarChart(labels, values) {
           label: "Current Stat Points",
           data: values,
           fill: true,
-          backgroundColor: "rgba(106, 184, 255, 0.18)", // soft blue fill
-          borderColor: "rgba(106, 184, 255, 0.95)",
-          pointBackgroundColor: "#ffb16a",
-          pointBorderColor: "#ffffff",
+          backgroundColor: "rgba(255, 188, 141, 0.22)",   // soft peach glow
+          borderColor: "#d98a52",                          // deeper peach outline
+          pointBackgroundColor: "#d98a52",                 // warm points
+          pointBorderColor: "#fff7ee",
           pointHoverRadius: 5,
           borderWidth: 2
         }
@@ -29,13 +29,20 @@ function createRadarChart(labels, values) {
       plugins: {
         legend: { display: false }
       },
+      layout: {
+        padding: 4
+      },
+      animation: {
+        duration: 700,
+        easing: "easeOutQuad"
+      },
       scales: {
         r: {
           angleLines: {
-            color: "rgba(255, 255, 255, 0.7)"
+            color: "rgba(255, 221, 189, 0.7)"             // very soft lines
           },
           grid: {
-            color: "rgba(255, 255, 255, 0.65)"
+            color: "rgba(255, 224, 197, 0.55)"            // light peach rings
           },
           suggestedMin: 0,
           suggestedMax: Math.max(5, ...values) + 1,
@@ -43,7 +50,7 @@ function createRadarChart(labels, values) {
             display: false
           },
           pointLabels: {
-            color: "#5a3a2a",
+            color: "#64473a",                              // Notion brown labels
             font: {
               size: 11,
               weight: "600"
@@ -61,7 +68,7 @@ function createRadarChart(labels, values) {
     createRadarChart(labels, values);
   } catch (err) {
     console.error(err);
-    const wrap = document.querySelector(".card");
+    const wrap = document.querySelector(".wrap");
     wrap.insertAdjacentHTML(
       "beforeend",
       `<p style="color:#a33939;font-size:0.8rem;margin-top:8px;">Couldn’t load stats from Notion. Check integration, database share, and env vars.</p>`
