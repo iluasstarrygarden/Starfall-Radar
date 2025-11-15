@@ -17,24 +17,24 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
+
+  /* Fixed content box inside the iframe */
+  width: 440px;          /* overall content width */
+  height: 360px;         /* 👈 shaved down height */
   font-family: system-ui, -apple-system, "SF Pro Text", Segoe UI, sans-serif;
   background: transparent;
-
-  /* ❗ Fixed content width so the chart never shrinks */
-  width: 440px;        /* overall content width */
-  overflow: auto;      /* adds internal scroll if Notion column is narrower */
+  overflow: hidden;      /* no internal scrollbars */
 }
 
 /* Center the chart nicely in the embed block */
 .wrap {
   position: relative;
   width: 100%;
-  min-height: 360px;
+  height: 100%;          /* fill the fixed 360px height */
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px 12px;
+  justify-content: center;  /* center horizontally */
+  align-items: center;      /* center vertically */
+  padding: 0;               /* no extra vertical space */
 }
 
 /* soft glitter haze behind the chart, just beyond the stats */
@@ -42,8 +42,8 @@ html, body {
   content: "";
   position: absolute;
 
-  width: 320px;
-  height: 320px;
+  width: 300px;          /* slightly tighter glow to match smaller height */
+  height: 300px;
 
   top: 50%;
   left: 50%;
@@ -62,13 +62,13 @@ html, body {
   );
 }
 
-/* Chart sizing – tweak max-width if you want it bigger/smaller */
+/* Chart sizing – fixed so it doesn't grow/shrink with columns */
 #radarChart {
   position: relative;
   z-index: 1;
 
-  width: 380px;
-  height: 380px;
+  width: 340px;          /* 👈 slightly smaller so it fits comfortably */
+  height: 340px;
   max-width: none;
   max-height: none;
   margin: 0 auto;
@@ -79,7 +79,7 @@ html, body {
   position: absolute;
   color: #ffb16a;
   opacity: 0.9;           /* stronger but still soft */
-  font-size: 20px;        /* bigger + more visible */
+  font-size: 20px;        /* visible but not huge */
   z-index: 2;
   animation: twinkle 2.5s infinite ease-in-out;
 }
@@ -93,12 +93,6 @@ html, body {
 .star:nth-child(6) { animation-duration: 2.4s; }
 .star:nth-child(7) { animation-duration: 2.9s; }
 .star:nth-child(8) { animation-duration: 3.2s; }
-
-/* slight variation by position */
-.star:nth-child(1) { animation-duration: 2.6s; }
-.star:nth-child(2) { animation-duration: 3s;   }
-.star:nth-child(3) { animation-duration: 2.3s; }
-.star:nth-child(4) { animation-duration: 2.8s; }
 
 @keyframes twinkle {
   0%, 100% { opacity: 0.75; transform: scale(0.9); }
