@@ -65,12 +65,11 @@ html, body {
   position: relative;
   z-index: 1;
 
-  /* fills the embed, but only up to this size */
   width: 100%;
   height: auto;
-  max-width: 420px;   /* you can try 380–420px until it feels right */
+  max-width: 420px;   /* or 380–420 depending on what looks nicest */
   max-height: 420px;
-  margin: 0 auto;     /* keeps it centered */
+  margin: 0 auto;
 }
 
 /* tiny twinkling stars */
