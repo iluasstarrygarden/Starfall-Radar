@@ -20,21 +20,25 @@ html, body {
 
   /* Fixed content box inside the iframe */
   width: 440px;          /* overall content width */
-  height: 360px;         /* 👈 shaved down height */
+  height: 300px;         /* 👈 shaved down height */
   font-family: system-ui, -apple-system, "SF Pro Text", Segoe UI, sans-serif;
   background: transparent;
   overflow: hidden;      /* no internal scrollbars */
+
+  display: flex;
+justify-content: center;   /* centers the .wrap horizontally */
+align-items: center;       /* centers .wrap vertically */
 }
 
 /* Center the chart nicely in the embed block */
 .wrap {
   position: relative;
   width: 100%;
-  height: 100%;          /* fill the fixed 360px height */
+  height: 100%;
   display: flex;
-  justify-content: center;  /* center horizontally */
-  align-items: center;      /* center vertically */
-  padding: 0;               /* no extra vertical space */
+  justify-content: center;   /* horizontal center */
+  align-items: center;       /* vertical center */
+  padding: 0;                /* remove extra space */
 }
 
 /* soft glitter haze behind the chart, just beyond the stats */
