@@ -24,6 +24,7 @@ html, body {
 
 /* Center the chart nicely in the embed block */
 .wrap {
+  position: relative;
   min-height: 100%;
   display: flex;
   align-items: center;
@@ -31,9 +32,46 @@ html, body {
   padding: 8px 12px;
 }
 
+/* soft glitter haze behind the chart */
+.wrap::before {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 196, 133, 0.16), transparent 60%),
+    radial-gradient(circle at 70% 75%, rgba(255, 224, 197, 0.18), transparent 60%),
+    radial-gradient(circle at 50% 40%, rgba(255, 177, 106, 0.14), transparent 65%);
+  opacity: 0.9;
+}
+
 /* Chart sizing – tweak max-width if you want it bigger/smaller */
 #radarChart {
+  position: relative;
+  z-index: 1;          /* sits above the glitter + stars */
   width: 100%;
   max-width: 340px;
   max-height: 340px;
+}
+
+/* tiny twinkling stars */
+.star {
+  position: absolute;
+  color: #ffb16a;      /* warm peach stars */
+  opacity: 0.55;
+  font-size: 14px;
+  z-index: 1;
+  animation: twinkle 2.5s infinite ease-in-out;
+}
+
+/* slight variation by position */
+.star:nth-child(1) { animation-duration: 2.6s; }
+.star:nth-child(2) { animation-duration: 3s;   }
+.star:nth-child(3) { animation-duration: 2.3s; }
+.star:nth-child(4) { animation-duration: 2.8s; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.9); }
+  50%      { opacity: 0.8; transform: scale(1);   }
 }
