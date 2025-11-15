@@ -65,10 +65,10 @@ html, body {
 /* tiny twinkling stars */
 .star {
   position: absolute;
-  color: #ffb16a;      /* warm peach stars */
-  opacity: 0.85;
-  font-size: 18px;     /* more visible */
-  z-index: 1;
+  color: #ffb16a;
+  opacity: 0.9;           /* stronger but still soft */
+  font-size: 20px;        /* bigger + more visible */
+  z-index: 2;
   animation: twinkle 2.5s infinite ease-in-out;
 }
 
