@@ -34,25 +34,30 @@ html, body {
 
 /* soft glitter haze behind the chart */
 .wrap::before {
-  content: "";
-  position: absolute;
-  inset: 10%;
+  width: 350px;        /* increased glow to match larger chart */
+  height: 350px;
+  border-radius: 50%;
   pointer-events: none;
   z-index: 0;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 196, 133, 0.16), transparent 60%),
-    radial-gradient(circle at 70% 75%, rgba(255, 224, 197, 0.18), transparent 60%),
-    radial-gradient(circle at 50% 40%, rgba(255, 177, 106, 0.14), transparent 65%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 188, 141, 0.32) 0%,
+    rgba(255, 224, 197, 0.18) 45%,
+    rgba(255, 224, 197, 0.0) 75%
+  );
   opacity: 0.9;
 }
 
 /* Chart sizing – tweak max-width if you want it bigger/smaller */
 #radarChart {
   position: relative;
-  z-index: 1;          /* sits above the glitter + stars */
+  z-index: 1;
   width: 100%;
-  max-width: 340px;
-  max-height: 340px;
+  max-width: 440px;   /* bigger chart */
+  max-height: 440px;
 }
 
 /* tiny twinkling stars */
