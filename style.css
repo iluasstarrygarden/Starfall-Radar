@@ -49,18 +49,18 @@ html, body {
   pointer-events: none;       /* ensure panel doesn't steal clicks (canvas remains interactive if needed) */
 }
 
-/* Fixed white panel behind the chart (prevents visual shrinking) */
+/* Fixed white panel behind the chart (no shadow for seamless look) */
 .panel {
   position: absolute;
   z-index: 0;
-  width: 420px;               /* medium-large panel width */
-  height: 360px;              /* panel height slightly taller than the chart for padding */
+  width: 420px;               /* panel width (change if you want) */
+  height: 360px;              /* panel height */
   background: var(--panel-white);
   border-radius: var(--panel-radius);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-  border: 1px solid rgba(0,0,0,0.03);
-  transform: translateZ(0);   /* make a composite layer for smoothness */
-  pointer-events: none;       /* clicks pass through */
+  box-shadow: none;           /* <- remove shadow for seamless look */
+  border: none;               /* <- remove border too */
+  transform: translateZ(0);
+  pointer-events: none;
 }
 
 /* soft glitter haze (keeps using pseudo or element; we keep pseudo for lighter DOM) */
@@ -84,17 +84,20 @@ html, body {
   );
 }
 
-/* Chart – placed above the panel and glow */
+/* Chart – fixed visual size, absolutely centered over the panel */
 #radarChart {
-  position: relative;
+  position: absolute;         /* absolute so it doesn't reflow */
   z-index: 2;                 /* above glow and panel */
-  width: 340px;               /* visual chart size */
-  height: 340px;
+  width: 340px !important;    /* fixed visual size */
+  height: 340px !important;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); /* perfectly centered on the panel */
   max-width: none;
   max-height: none;
-  margin: 0 auto;
+  margin: 0;
   display: block;
-  pointer-events: auto;       /* keep interactive if you have hover effects */
+  pointer-events: auto;
 }
 
 /* stars container left for semantic grouping (stars absolute inside it) */
