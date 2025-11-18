@@ -5,6 +5,8 @@
   --peach-mid: #ffc485;
   --peach-deep: #ffb16a;
   --brown-text: #64473a;      /* Notion brown text colour */
+  --panel-white: #ffffff;
+  --panel-radius: 14px;
 }
 
 /* Reset / base */
@@ -12,95 +14,125 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* iframe container: let it take the column width but with a fixed height */
 html, body {
   margin: 0;
   padding: 0;
 
-  /* Let the content match the Notion column width */
+  /* allow the iframe to match the column width */
   width: 100%;
-  height: 340px;         /* a bit shorter than before */
-
+  height: 340px;         /* panel + chart fit comfortably in this height */
   font-family: system-ui, -apple-system, "SF Pro Text", Segoe UI, sans-serif;
   background: transparent;
   overflow: hidden;
 
-  /* Center everything inside the iframe */
+  /* center the wrapper */
   display: flex;
-  justify-content: center;   /* horizontal center */
-  align-items: center;       /* vertical center */
+  justify-content: center;
+  align-items: center;
 }
 
-/* Wrapper that holds glow + stars + chart */
+/* Wrapper that holds panel + glow + stars + chart */
 .wrap {
   position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;    /* center chart horizontally */
-  align-items: center;        /* center chart vertically */
+  align-items: center;        /* center vertically */
   padding: 0;
+  overflow: visible;
+  pointer-events: none;       /* ensure panel doesn't steal clicks (canvas remains interactive if needed) */
 }
 
-/* soft glitter haze behind the chart, just beyond the stats */
+/* Fixed white panel behind the chart (prevents visual shrinking) */
+.panel {
+  position: absolute;
+  z-index: 0;
+  width: 420px;               /* medium-large panel width */
+  height: 360px;              /* panel height slightly taller than the chart for padding */
+  background: var(--panel-white);
+  border-radius: var(--panel-radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.03);
+  transform: translateZ(0);   /* make a composite layer for smoothness */
+  pointer-events: none;       /* clicks pass through */
+}
+
+/* soft glitter haze (keeps using pseudo or element; we keep pseudo for lighter DOM) */
 .wrap::before {
   content: "";
   position: absolute;
-
-  width: 300px;          /* glow sized for slightly larger chart */
-  height: 300px;
-
+  z-index: 1;
+  width: 360px;
+  height: 360px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
   border-radius: 50%;
-  z-index: 0;
   pointer-events: none;
   opacity: 0.9;
-
   background: radial-gradient(
     circle,
-    rgba(255, 188, 141, 0.32) 0%,
-    rgba(255, 224, 197, 0.18) 45%,
+    rgba(255, 188, 141, 0.30) 0%,
+    rgba(255, 224, 197, 0.16) 45%,
     rgba(255, 224, 197, 0) 75%
   );
 }
 
-/* Chart – fixed visual size, centered */
+/* Chart – placed above the panel and glow */
 #radarChart {
   position: relative;
-  z-index: 1;
-
-  width: 330px;          /* a bit bigger than before */
-  height: 330px;
+  z-index: 2;                 /* above glow and panel */
+  width: 340px;               /* visual chart size */
+  height: 340px;
   max-width: none;
   max-height: none;
   margin: 0 auto;
+  display: block;
+  pointer-events: auto;       /* keep interactive if you have hover effects */
 }
 
-/* tiny twinkling stars */
+/* stars container left for semantic grouping (stars absolute inside it) */
+.stars {
+  position: absolute;
+  z-index: 3;
+  width: 420px;
+  height: 360px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* tiny twinkling stars (absolute positions set inline or via style attr) */
 .star {
   position: absolute;
-  color: #ffb16a;
-  opacity: 0.9;           /* stronger but still soft */
-  font-size: 20px;        /* visible but not huge */
-  z-index: 2;
-  animation: twinkle 2.5s infinite ease-in-out;
+  color: var(--peach-deep);
+  opacity: 0.9;
+  font-size: 20px;
+  transform-origin: center center;
+  animation: twinkle 2.6s infinite ease-in-out;
 }
 
-/* animation speed variations */
-.star:nth-child(1) { animation-duration: 2.6s; }
-.star:nth-child(2) { animation-duration: 3.0s; }
-.star:nth-child(3) { animation-duration: 2.3s; }
-.star:nth-child(4) { animation-duration: 2.8s; }
-.star:nth-child(5) { animation-duration: 3.1s; }
-.star:nth-child(6) { animation-duration: 2.4s; }
-.star:nth-child(7) { animation-duration: 2.9s; }
-.star:nth-child(8) { animation-duration: 3.2s; }
+/* slight animation variations */
+.star:nth-child(odd) { animation-duration: 2.3s; }
+.star:nth-child(even) { animation-duration: 3.0s; }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.75; transform: scale(0.9); }
+  0%, 100% { opacity: 0.75; transform: scale(0.92); }
   50%      { opacity: 1;    transform: scale(1);   }
+}
+
+/* small responsive fallback: if the column is extremely narrow, allow internal scroll horizontally */
+@media (max-width: 460px) {
+  .panel { width: 360px; height: 320px; }
+  .stars { width: 360px; height: 320px; transform: translate(-50%, -50%); }
+  #radarChart { width: 300px; height: 300px; }
+  .wrap::before { width: 280px; height: 280px; }
+  html, body { height: 320px; }
 }
