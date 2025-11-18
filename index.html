@@ -9,20 +9,27 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="wrap">
-  <!-- subtle decorative stars around the chart -->
-<!-- Stars positioned relative to the container -->
-<div class="star" style="top:18%; left:48%;">✦</div>
-<div class="star" style="top:28%; left:68%;">✧</div>
-<div class="star" style="top:48%; left:72%;">✶</div>
-<div class="star" style="bottom:22%; left:62%;">✷</div>
-<div class="star" style="bottom:26%; left:38%;">✦</div>
-<div class="star" style="bottom:38%; left:28%;">✺</div>
-<div class="star" style="top:36%; left:32%;">✧</div>
-<div class="star" style="top:26%; left:42%;">✶</div>
+<div class="wrap">
+  <!-- fixed panel background (white card) -->
+  <div class="panel" aria-hidden="true"></div>
 
-  <!-- only the radar chart canvas -->
-  <canvas id="radarChart"></canvas>
+  <!-- soft decorative glow behind the chart -->
+  <!-- (kept as ::before in CSS; no change needed here) -->
+
+  <!-- decorative stars (keep your existing star divs if present) -->
+  <div class="stars">
+    <div class="star" style="top:18%; left:12%;">✦</div>
+    <div class="star" style="top:22%; right:10%;">✧</div>
+    <div class="star" style="bottom:22%; left:12%;">✦</div>
+    <div class="star" style="bottom:14%; right:14%;">✧</div>
+    <div class="star" style="top:36%; left:30%;">✦</div>
+    <div class="star" style="top:36%; right:28%;">✧</div>
+    <div class="star" style="top:26%; left:44%;">✦</div>
+    <div class="star" style="top:26%; right:40%;">✧</div>
+  </div>
+
+  <!-- the canvas — stays here -->
+  <canvas id="radarChart" role="img" aria-label="Cosmic stars stat chart"></canvas>
 </div>
 
   <script src="script.js"></script>
