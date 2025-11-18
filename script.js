@@ -1,27 +1,64 @@
+// script.js — full replacement
+// Expects a canvas with id="radarChart" and a .wrap container in the HTML.
+// Matches CSS that pins the canvas to 340x340 and centers it over the panel.
+
 async function fetchStats() {
   const res = await fetch("/api/stats");
   if (!res.ok) throw new Error("Failed to fetch stats");
   return res.json();
 }
 
-function createRadarChart(labels, values) {
-  const ctx = document.getElementById("radarChart").getContext("2d");
-
-  // 1) Find the highest stat value you currently have
+/**
+ * Choose a "nice" upper bound for the radar based on the largest stat value.
+ * Caps at 500.
+ */
+function chooseChartMax(values) {
   const rawMax = Math.max(...values, 0);
 
-  // 2) Choose a "nice" upper bound, capped at 500
-  let chartMax;
-  if (rawMax <= 10) chartMax = 10;
-  else if (rawMax <= 25) chartMax = 25;
-  else if (rawMax <= 50) chartMax = 50;
-  else if (rawMax <= 100) chartMax = 100;
-  else if (rawMax <= 200) chartMax = 200;
-  else if (rawMax <= 300) chartMax = 300;
-  else if (rawMax <= 400) chartMax = 400;
-  else chartMax = 500; // hard cap
+  if (rawMax <= 10) return 10;
+  if (rawMax <= 25) return 25;
+  if (rawMax <= 50) return 50;
+  if (rawMax <= 100) return 100;
+  if (rawMax <= 200) return 200;
+  if (rawMax <= 300) return 300;
+  if (rawMax <= 400) return 400;
+  return 500;
+}
 
-  new Chart(ctx, {
+function createRadarChart(labels, values) {
+  // --- LOCK canvas pixel size to the CSS target (prevents Chart.js from resizing) ---
+  // These numbers should match your CSS (#radarChart width/height).
+  const CANVAS_PX = 340;
+  const canvas = document.getElementById("radarChart");
+
+  if (!canvas) {
+    console.error("No canvas with id 'radarChart' found in the document.");
+    return;
+  }
+
+  // Set the actual drawing buffer (pixel) size to guarantee consistent rendering.
+  // This prevents Chart.js from auto-scaling the canvas when the iframe changes size.
+  canvas.width = CANVAS_PX;
+  canvas.height = CANVAS_PX;
+
+  // Get 2D context
+  const ctx = canvas.getContext("2d");
+
+  // If a prior chart instance exists, destroy it to avoid duplicates
+  if (window._radarChartInstance) {
+    try {
+      window._radarChartInstance.destroy();
+    } catch (e) {
+      // ignore
+    }
+    window._radarChartInstance = null;
+  }
+
+  // Choose dynamic max (capped at 500)
+  const chartMax = chooseChartMax(values);
+
+  // Create the Chart.js radar chart — note: responsive: false keeps canvas size fixed.
+  window._radarChartInstance = new Chart(ctx, {
     type: "radar",
     data: {
       labels,
@@ -40,36 +77,40 @@ function createRadarChart(labels, values) {
       ]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: true,
+      // critical: Chart.js will not try to resize the canvas
+      responsive: false,
+      maintainAspectRatio: false,
+      // preserve the aspect ratio when drawing (canvas buffer already square)
       aspectRatio: 1,
 
       plugins: {
         legend: { display: false }
       },
+
       layout: {
         padding: 4
       },
+
       animation: {
         duration: 700,
         easing: "easeOutQuad"
       },
+
       scales: {
         r: {
           min: 0,
-          max: chartMax,  // 👈 dynamic, up to 500
-
+          max: chartMax, // dynamic based on values
           angleLines: {
-            color: "rgba(255, 221, 189, 0.7)"           // very soft lines
+            color: "rgba(255, 221, 189, 0.7)" // very soft lines
           },
           grid: {
-            color: "rgba(255, 224, 197, 0.55)"          // light peach rings
+            color: "rgba(255, 224, 197, 0.55)" // light peach rings
           },
           ticks: {
             display: false
           },
           pointLabels: {
-            color: "#64473a",                            // Notion brown labels
+            color: "#64473a", // Notion brown labels
             font: {
               size: 11,
               weight: "600"
@@ -81,16 +122,25 @@ function createRadarChart(labels, values) {
   });
 }
 
+/* Entry point: fetch stats and build the chart */
 (async () => {
   try {
     const { labels, values } = await fetchStats();
+
+    // Basic validation
+    if (!Array.isArray(labels) || !Array.isArray(values) || labels.length !== values.length) {
+      throw new Error("Invalid stats payload from /api/stats");
+    }
+
     createRadarChart(labels, values);
   } catch (err) {
     console.error(err);
     const wrap = document.querySelector(".wrap");
-    wrap.insertAdjacentHTML(
-      "beforeend",
-      `<p style="color:#a33939;font-size:0.8rem;margin-top:8px;">Couldn’t load stats from Notion. Check integration, database share, and env vars.</p>`
-    );
+    if (wrap) {
+      wrap.insertAdjacentHTML(
+        "beforeend",
+        `<p style="color:#a33939;font-size:0.85rem;margin-top:8px;">Couldn’t load stats from Notion. Check integration, database share, and env vars.</p>`
+      );
+    }
   }
 })();
