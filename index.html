@@ -9,29 +9,37 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<div class="wrap">
-  <!-- fixed panel background (white card) -->
-  <div class="panel" aria-hidden="true"></div>
+  <!--
+    Wrapper: contains the fixed panel, subtle glow, decorative stars, and the canvas.
+    CSS positions the canvas absolutely and centers it over the panel.
+  -->
+  <div class="wrap" role="region" aria-label="Cosmic Stars stat chart area">
+    <!-- fixed panel background (white card) -->
+    <div class="panel" aria-hidden="true"></div>
 
-  <!-- soft decorative glow behind the chart -->
-  <!-- (kept as ::before in CSS; no change needed here) -->
+    <!-- soft decorative glow behind the chart is drawn via .wrap::before in CSS -->
 
-  <!-- decorative stars (keep your existing star divs if present) -->
-  <div class="stars">
-    <div class="star" style="top:18%; left:12%;">✦</div>
-    <div class="star" style="top:22%; right:10%;">✧</div>
-    <div class="star" style="bottom:22%; left:12%;">✦</div>
-    <div class="star" style="bottom:14%; right:14%;">✧</div>
-    <div class="star" style="top:36%; left:30%;">✦</div>
-    <div class="star" style="top:36%; right:28%;">✧</div>
-    <div class="star" style="top:26%; left:44%;">✦</div>
-    <div class="star" style="top:26%; right:40%;">✧</div>
+    <!-- decorative stars — 12 softly varied stars -->
+    <div class="stars" aria-hidden="true">
+      <div class="star" style="top:6%; left:8%; font-size:18px; opacity:0.85;">✦</div>
+      <div class="star" style="top:10%; right:10%; font-size:14px; opacity:0.65;">✧</div>
+      <div class="star" style="top:28%; left:6%; font-size:16px; opacity:0.7;">✦</div>
+      <div class="star" style="top:42%; left:16%; font-size:20px; opacity:0.95;">✦</div>
+      <div class="star" style="top:24%; left:48%; font-size:12px; opacity:0.6;">✧</div>
+      <div class="star" style="top:12%; left:72%; font-size:14px; opacity:0.6;">✦</div>
+      <div class="star" style="bottom:18%; right:12%; font-size:18px; opacity:0.9;">✧</div>
+      <div class="star" style="bottom:12%; left:10%; font-size:14px; opacity:0.6;">✦</div>
+      <div class="star" style="top:62%; left:44%; font-size:16px; opacity:0.7;">✦</div>
+      <div class="star" style="top:50%; right:20%; font-size:12px; opacity:0.55;">✧</div>
+      <div class="star" style="top:34%; right:46%; font-size:10px; opacity:0.45;">✦</div>
+      <div class="star" style="bottom:6%; left:50%; font-size:14px; opacity:0.6;">✧</div>
+    </div>
+
+    <!-- the canvas — script.js will set the drawing buffer size to match CSS (340x340) -->
+    <canvas id="radarChart" role="img" aria-label="Cosmic Stars stat radar chart"></canvas>
   </div>
 
-  <!-- the canvas — stays here -->
-  <canvas id="radarChart" role="img" aria-label="Cosmic stars stat chart"></canvas>
-</div>
-
+  <!-- load the chart logic last so DOM is ready -->
   <script src="script.js"></script>
 </body>
 </html>
