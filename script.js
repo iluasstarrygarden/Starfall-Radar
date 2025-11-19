@@ -1,20 +1,19 @@
-// script.js — full replacement
-// Expects a canvas with id="radarChart" and a .wrap container in the HTML.
-// Matches CSS that pins the canvas to 340x340 and centers it over the panel.
+// script.js — complete replacement
+// Expects:
+//  - a <canvas id="radarChart"></canvas> in the page
+//  - a .wrap container for error messages
+// Canvas/CSS should pin visual size to 340x340 (CSS/HTML handles layout).
 
+// --- Fetch stats from your /api/stats endpoint ---
 async function fetchStats() {
   const res = await fetch("/api/stats");
   if (!res.ok) throw new Error("Failed to fetch stats");
   return res.json();
 }
 
-/**
- * Choose a "nice" upper bound for the radar based on the largest stat value.
- * Caps at 500.
- */
+// --- Choose a "nice" upper bound for the chart (capped at 500) ---
 function chooseChartMax(values) {
   const rawMax = Math.max(...values, 0);
-
   if (rawMax <= 10) return 10;
   if (rawMax <= 25) return 25;
   if (rawMax <= 50) return 50;
@@ -25,96 +24,111 @@ function chooseChartMax(values) {
   return 500;
 }
 
-function createRadarChart(labels, values) {
-  // --- LOCK canvas pixel size to the CSS target (prevents Chart.js from resizing) ---
-  // These numbers should match your CSS (#radarChart width/height).
+// --- Build the radar chart (entire function / single place to change styles) ---
+function createRadarChart(labels, rawValues) {
+  // target canvas pixel size — keep consistent with your CSS
   const CANVAS_PX = 340;
   const canvas = document.getElementById("radarChart");
-
   if (!canvas) {
-    console.error("No canvas with id 'radarChart' found in the document.");
+    console.error("createRadarChart: canvas #radarChart not found");
     return;
   }
 
-  // Set the actual drawing buffer (pixel) size to guarantee consistent rendering.
-  // This prevents Chart.js from auto-scaling the canvas when the iframe changes size.
+  // force the actual drawing buffer size (prevents Chart.js from auto-resizing)
   canvas.width = CANVAS_PX;
   canvas.height = CANVAS_PX;
 
-  // Get 2D context
   const ctx = canvas.getContext("2d");
 
-  // If a prior chart instance exists, destroy it to avoid duplicates
+  // convert/clean values into numbers (protect against string values)
+  const values = rawValues.map(v => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  });
+
+  // destroy previous instance if present
   if (window._radarChartInstance) {
-    try {
-      window._radarChartInstance.destroy();
-    } catch (e) {
-      // ignore
-    }
+    try { window._radarChartInstance.destroy(); } catch (e) { /* ignore */ }
     window._radarChartInstance = null;
   }
 
-  // Choose dynamic max (capped at 500)
+  // determine dynamic max
   const chartMax = chooseChartMax(values);
 
-  // Create the Chart.js radar chart — note: responsive: false keeps canvas size fixed.
+  // create a warm radial gradient for the polygon fill
+  // (center -> edges; alpha tuned for subtlety)
+  const grad = ctx.createRadialGradient(
+    CANVAS_PX / 2, CANVAS_PX / 2, CANVAS_PX * 0.05,
+    CANVAS_PX / 2, CANVAS_PX / 2, CANVAS_PX * 0.6
+  );
+  grad.addColorStop(0, "rgba(255,215,170,0.28)");
+  grad.addColorStop(0.55, "rgba(255,188,141,0.20)");
+  grad.addColorStop(1, "rgba(255,188,141,0.02)");
+
+  // dataset styling: thin outline, subtle fill, minimal points
+  const dataset = {
+    label: "Current Stat Points",
+    data: values,
+    fill: true,
+    backgroundColor: grad,
+    borderColor: "rgba(217,138,82,0.72)",
+    borderWidth: 1.1,
+    pointRadius: 3.2,
+    pointStyle: "circle",
+    pointBackgroundColor: "rgba(217,138,82,0.9)",
+    pointBorderColor: "rgba(255,255,255,0)", // no thick point border
+    pointHoverRadius: 5,
+    tension: 0.15
+  };
+
+  // create chart (responsive disabled so canvas stays fixed)
   window._radarChartInstance = new Chart(ctx, {
     type: "radar",
-    data: {
-      labels,
-      datasets: [
-        {
-          label: "Current Stat Points",
-          data: values,
-          fill: true,
-          backgroundColor: "rgba(255, 188, 141, 0.22)",  // soft peach glow
-          borderColor: "#d98a52",                         // deeper peach outline
-          pointBackgroundColor: "#d98a52",                // warm points
-          pointBorderColor: "#fff7ee",
-          pointHoverRadius: 5,
-          borderWidth: 2
-        }
-      ]
-    },
+    data: { labels, datasets: [dataset] },
     options: {
-      // critical: Chart.js will not try to resize the canvas
       responsive: false,
       maintainAspectRatio: false,
-      // preserve the aspect ratio when drawing (canvas buffer already square)
       aspectRatio: 1,
 
       plugins: {
-        legend: { display: false }
+        legend: { display: false },
+        tooltip: {
+          enabled: true,
+          backgroundColor: "rgba(255,255,255,0.98)",
+          titleColor: "#2b1a12",
+          bodyColor: "#2b1a12",
+          borderColor: "rgba(0,0,0,0.04)",
+          borderWidth: 1,
+          /* subtle shadow handled by CSS in embed if desired */
+        }
       },
 
-      layout: {
-        padding: 4
-      },
+      layout: { padding: 6 },
 
-      animation: {
-        duration: 700,
-        easing: "easeOutQuad"
+      animation: { duration: 700, easing: "easeOutQuad" },
+
+      elements: {
+        line: { borderJoinStyle: "round" },
+        point: { hoverBorderWidth: 0 }
       },
 
       scales: {
         r: {
           min: 0,
-          max: chartMax, // dynamic based on values
-          angleLines: {
-            color: "rgba(255, 221, 189, 0.7)" // very soft lines
-          },
+          max: chartMax,
+          beginAtZero: true,
           grid: {
-            color: "rgba(255, 224, 197, 0.55)" // light peach rings
+            color: "rgba(255,224,197,0.16)", // faint rings
+            lineWidth: 1
           },
-          ticks: {
-            display: false
+          angleLines: {
+            color: "rgba(255,224,197,0.08)"  // extremely faint spokes
           },
+          ticks: { display: false },
           pointLabels: {
-            color: "#64473a", // Notion brown labels
-            font: {
-              size: 11,
-              weight: "600"
-            }
+            color: "#6b4f42",
+            font: { size: 11, weight: "600" },
+            padding: 10
           }
         }
       }
@@ -122,24 +136,28 @@ function createRadarChart(labels, values) {
   });
 }
 
-/* Entry point: fetch stats and build the chart */
+// --- Entry point: fetch & render; show a friendly error message in .wrap on failure ---
 (async () => {
   try {
     const { labels, values } = await fetchStats();
 
-    // Basic validation
+    // basic validation: arrays & equal length
     if (!Array.isArray(labels) || !Array.isArray(values) || labels.length !== values.length) {
-      throw new Error("Invalid stats payload from /api/stats");
+      throw new Error("Invalid /api/stats payload — labels/values mismatch");
     }
 
     createRadarChart(labels, values);
   } catch (err) {
-    console.error(err);
+    console.error("Radar init error:", err);
     const wrap = document.querySelector(".wrap");
     if (wrap) {
+      // remove any existing message first
+      const prev = wrap.querySelector(".radar-error");
+      if (prev) prev.remove();
+
       wrap.insertAdjacentHTML(
         "beforeend",
-        `<p style="color:#a33939;font-size:0.85rem;margin-top:8px;">Couldn’t load stats from Notion. Check integration, database share, and env vars.</p>`
+        `<p class="radar-error" style="color:#a33939;font-size:0.9rem;margin-top:8px;">Couldn’t load stats from Notion. Check integration, database share, and env vars.</p>`
       );
     }
   }
