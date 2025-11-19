@@ -73,7 +73,7 @@ function createRadarChart(labels, rawValues) {
     fill: true,
     backgroundColor: grad,
     borderColor: "rgba(217,138,82,0.92)", // stronger, nearly-opaque outline
-    borderWidth: 0.15,                      // changed to be thinner
+    borderWidth: 0.05,                      // changed to be thinner
     pointRadius: 0,                        // NO visible point dots
     pointHoverRadius: 0,                   // no hover dots either
     tension: 0.08,                         // gentle smoothing
