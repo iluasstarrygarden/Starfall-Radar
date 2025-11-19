@@ -1,4 +1,4 @@
-// script.js — complete replacement
+// script.js — complete replacement (updated: no dots, stronger outline, softer mesh)
 // Expects:
 //  - a <canvas id="radarChart"></canvas> in the page
 //  - a .wrap container for error messages
@@ -24,7 +24,7 @@ function chooseChartMax(values) {
   return 500;
 }
 
-// --- Build the radar chart (entire function / single place to change styles) ---
+// --- Build the radar chart (single changeable function for styling) ---
 function createRadarChart(labels, rawValues) {
   // target canvas pixel size — keep consistent with your CSS
   const CANVAS_PX = 340;
@@ -34,13 +34,13 @@ function createRadarChart(labels, rawValues) {
     return;
   }
 
-  // force the actual drawing buffer size (prevents Chart.js from auto-resizing)
+  // force the drawing buffer size (prevents Chart.js from auto-resizing)
   canvas.width = CANVAS_PX;
   canvas.height = CANVAS_PX;
 
   const ctx = canvas.getContext("2d");
 
-  // convert/clean values into numbers (protect against string values)
+  // convert/clean values into numbers (protects against stringy Notion results)
   const values = rawValues.map(v => {
     const n = Number(v);
     return Number.isFinite(n) ? n : 0;
@@ -52,36 +52,36 @@ function createRadarChart(labels, rawValues) {
     window._radarChartInstance = null;
   }
 
-  // determine dynamic max
+  // choose a dynamic max based on data
   const chartMax = chooseChartMax(values);
 
   // create a warm radial gradient for the polygon fill
-  // (center -> edges; alpha tuned for subtlety)
   const grad = ctx.createRadialGradient(
     CANVAS_PX / 2, CANVAS_PX / 2, CANVAS_PX * 0.05,
     CANVAS_PX / 2, CANVAS_PX / 2, CANVAS_PX * 0.6
   );
-  grad.addColorStop(0, "rgba(255,215,170,0.28)");
-  grad.addColorStop(0.55, "rgba(255,188,141,0.20)");
+  grad.addColorStop(0, "rgba(255,215,170,0.30)");
+  grad.addColorStop(0.55, "rgba(255,188,141,0.22)");
   grad.addColorStop(1, "rgba(255,188,141,0.02)");
 
-  // dataset styling: thin outline, subtle fill, minimal points
+  // dataset styling:
+  // - pointRadius: 0 removes dots completely
+  // - stronger borderWidth & opacity for the outer line
   const dataset = {
     label: "Current Stat Points",
     data: values,
     fill: true,
     backgroundColor: grad,
-    borderColor: "rgba(217,138,82,0.72)",
-    borderWidth: 1.1,
-    pointRadius: 3.2,
-    pointStyle: "circle",
-    pointBackgroundColor: "rgba(217,138,82,0.9)",
-    pointBorderColor: "rgba(255,255,255,0)", // no thick point border
-    pointHoverRadius: 5,
-    tension: 0.15
+    borderColor: "rgba(217,138,82,0.92)", // stronger, nearly-opaque outline
+    borderWidth: 2.6,                      // thicker outer line
+    pointRadius: 0,                        // NO visible point dots
+    pointHoverRadius: 0,                   // no hover dots either
+    tension: 0.08,                         // gentle smoothing
+    // keep hover behaviour subtle
+    hoverBorderWidth: 0
   };
 
-  // create chart (responsive disabled so canvas stays fixed)
+  // Create chart instance (responsive false so canvas stays fixed)
   window._radarChartInstance = new Chart(ctx, {
     type: "radar",
     data: { labels, datasets: [dataset] },
@@ -98,8 +98,7 @@ function createRadarChart(labels, rawValues) {
           titleColor: "#2b1a12",
           bodyColor: "#2b1a12",
           borderColor: "rgba(0,0,0,0.04)",
-          borderWidth: 1,
-          /* subtle shadow handled by CSS in embed if desired */
+          borderWidth: 1
         }
       },
 
@@ -117,14 +116,21 @@ function createRadarChart(labels, rawValues) {
           min: 0,
           max: chartMax,
           beginAtZero: true,
-          grid: {
-            color: "rgba(255,224,197,0.16)", // faint rings
+
+          // angleLines are the spokes — slightly visible but understated
+          angleLines: {
+            color: "rgba(217,138,82,0.20)",
             lineWidth: 1
           },
-          angleLines: {
-            color: "rgba(255,224,197,0.08)"  // extremely faint spokes
+
+          // grid is the inner mesh — intentionally subtle so outline stands out
+          grid: {
+            color: "rgba(217,138,82,0.10)",
+            lineWidth: 1
           },
+
           ticks: { display: false },
+
           pointLabels: {
             color: "#6b4f42",
             font: { size: 11, weight: "600" },
@@ -136,12 +142,12 @@ function createRadarChart(labels, rawValues) {
   });
 }
 
-// --- Entry point: fetch & render; show a friendly error message in .wrap on failure ---
+// --- Entry point: fetch & render; friendly error message on failure ---
 (async () => {
   try {
     const { labels, values } = await fetchStats();
 
-    // basic validation: arrays & equal length
+    // Basic validation
     if (!Array.isArray(labels) || !Array.isArray(values) || labels.length !== values.length) {
       throw new Error("Invalid /api/stats payload — labels/values mismatch");
     }
@@ -151,7 +157,6 @@ function createRadarChart(labels, rawValues) {
     console.error("Radar init error:", err);
     const wrap = document.querySelector(".wrap");
     if (wrap) {
-      // remove any existing message first
       const prev = wrap.querySelector(".radar-error");
       if (prev) prev.remove();
 
