@@ -1,15 +1,19 @@
+/* ————————————————
+   Starfall Radar — Fixed Layout
+   Matches script.js (340×340 canvas buffer)
+   ———————————————— */
+
 :root {
-  /* Golden Academia / Ilua palette */
-  --bg: transparent;          /* let Notion’s white show through */
+  --bg: transparent;
   --peach-soft: #ffe0c5;
   --peach-mid: #ffc485;
   --peach-deep: #ffb16a;
-  --brown-text: #64473a;      /* Notion brown text colour */
+  --brown-text: #64473a;
   --panel-white: #ffffff;
   --panel-radius: 14px;
 }
 
-/* Reset / base */
+/* Base reset */
 *,
 *::before,
 *::after {
@@ -18,64 +22,76 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* iframe container: let it take the column width but with a fixed height */
 html, body {
   margin: 0;
   padding: 0;
-
-  /* allow the iframe to match the column width */
   width: 100%;
-  height: 340px;         /* panel + chart fit comfortably in this height */
+
+  /* Fixed vertical space so chart never gets clipped */
+  height: 330px;
+
   font-family: system-ui, -apple-system, "SF Pro Text", Segoe UI, sans-serif;
   background: transparent;
-  overflow: hidden;
 
-  /* center the wrapper */
   display: flex;
   justify-content: center;
   align-items: center;
+
+  overflow: hidden;
 }
 
-/* Wrapper that holds panel + glow + stars + chart */
+/* Wrapper holding everything */
 .wrap {
   position: relative;
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;    /* center chart horizontally */
-  align-items: center;        /* center vertically */
-  padding: 0;
-  overflow: visible;
-  pointer-events: none;       /* ensure panel doesn't steal clicks (canvas remains interactive if needed) */
-}
-
-/* Fixed white panel behind the chart (no shadow for seamless look) */
-.panel {
-  position: absolute;
-  z-index: 0;
-  width: 420px;               /* panel width (change if you want) */
-  height: 360px;              /* panel height */
-  background: var(--panel-white);
-  border-radius: var(--panel-radius);
-  box-shadow: none;           /* <- remove shadow for seamless look */
-  border: none;               /* <- remove border too */
-  transform: translateZ(0);
+  justify-content: center;
+  align-items: center;
   pointer-events: none;
 }
 
-/* soft glitter haze (keeps using pseudo or element; we keep pseudo for lighter DOM) */
+/* ——————————
+   BACK PANEL (white card)
+   —————————— */
+.panel {
+  position: absolute;
+  z-index: 0;
+
+  /* panel size (slightly trimmed vertically) */
+  width: 420px;
+  height: 330px;
+
+  background: var(--panel-white);
+  border-radius: var(--panel-radius);
+  border: none;
+  box-shadow: none;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* ——————————
+   SOFT PEACH GLOW
+   —————————— */
 .wrap::before {
   content: "";
   position: absolute;
   z-index: 1;
-  width: 360px;
-  height: 360px;
+
+  width: 340px;
+  height: 340px;
+
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
   border-radius: 50%;
   pointer-events: none;
   opacity: 0.9;
+
   background: radial-gradient(
     circle,
     rgba(255, 188, 141, 0.30) 0%,
@@ -84,58 +100,79 @@ html, body {
   );
 }
 
-/* Chart – fixed visual size, absolutely centered over the panel */
+/* ——————————
+   RADAR CANVAS
+   —————————— */
 #radarChart {
-  position: absolute;         /* absolute so it doesn't reflow */
-  z-index: 2;                 /* above glow and panel */
-  width: 340px !important;    /* fixed visual size */
+  position: absolute;
+  z-index: 2;
+
+  width: 340px !important;
   height: 340px !important;
+
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%); /* perfectly centered on the panel */
+  transform: translate(-50%, -50%);
+
   max-width: none;
   max-height: none;
-  margin: 0;
   display: block;
   pointer-events: auto;
 }
 
-/* stars container left for semantic grouping (stars absolute inside it) */
+/* ——————————
+   STARS
+   —————————— */
 .stars {
   position: absolute;
   z-index: 3;
+
   width: 420px;
-  height: 360px;
+  height: 330px;
+
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
-/* tiny twinkling stars (absolute positions set inline or via style attr) */
 .star {
   position: absolute;
   color: var(--peach-deep);
   opacity: 0.9;
-  font-size: 20px;
   transform-origin: center center;
   animation: twinkle 2.6s infinite ease-in-out;
 }
 
-/* slight animation variations */
 .star:nth-child(odd) { animation-duration: 2.3s; }
 .star:nth-child(even) { animation-duration: 3.0s; }
 
 @keyframes twinkle {
   0%, 100% { opacity: 0.75; transform: scale(0.92); }
-  50%      { opacity: 1;    transform: scale(1);   }
+  50%      { opacity: 1;    transform: scale(1); }
 }
 
-/* small responsive fallback: if the column is extremely narrow, allow internal scroll horizontally */
+/* ——————————
+   EMERGENCY MOBILE FALLBACK
+   —————————— */
 @media (max-width: 460px) {
-  .panel { width: 360px; height: 320px; }
-  .stars { width: 360px; height: 320px; transform: translate(-50%, -50%); }
-  #radarChart { width: 300px; height: 300px; }
-  .wrap::before { width: 280px; height: 280px; }
-  html, body { height: 320px; }
+  html, body {
+    height: 310px;
+  }
+  .panel {
+    width: 360px;
+    height: 300px;
+  }
+  .stars {
+    width: 360px;
+    height: 300px;
+  }
+  #radarChart {
+    width: 300px !important;
+    height: 300px !important;
+  }
+  .wrap::before {
+    width: 280px;
+    height: 280px;
+  }
 }
