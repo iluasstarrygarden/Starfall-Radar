@@ -27,7 +27,7 @@ function chooseChartMax(values) {
 // --- Build the radar chart (single changeable function for styling) ---
 function createRadarChart(labels, rawValues) {
   // target canvas pixel size — keep consistent with your CSS
-  const CANVAS_PX = 340;
+  const CANVAS_PX = 380;
   const canvas = document.getElementById("radarChart");
   if (!canvas) {
     console.error("createRadarChart: canvas #radarChart not found");
