@@ -1,6 +1,6 @@
 /* ————————————————
    Starfall Radar — Fixed Layout
-   Matches script.js (340×340 canvas buffer)
+   Matches script.js (380×380 canvas buffer)
    ———————————————— */
 
 :root {
@@ -27,8 +27,8 @@ html, body {
   padding: 0;
   width: 100%;
 
-  /* Fixed vertical space so chart never gets clipped */
-  height: 330px;
+  /* Slightly taller for the 380px radar */
+  height: 360px;
 
   font-family: system-ui, -apple-system, "SF Pro Text", Segoe UI, sans-serif;
   background: transparent;
@@ -58,9 +58,9 @@ html, body {
   position: absolute;
   z-index: 0;
 
-  /* panel size (slightly trimmed vertically) */
-  width: 420px;
-  height: 330px;
+  /* scaled panel for 380px chart */
+  width: 460px;
+  height: 360px;
 
   background: var(--panel-white);
   border-radius: var(--panel-radius);
@@ -81,13 +81,12 @@ html, body {
   position: absolute;
   z-index: 1;
 
-  width: 340px;
-  height: 340px;
+  width: 400px;
+  height: 400px;
 
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
   border-radius: 50%;
   pointer-events: none;
   opacity: 0.9;
@@ -107,8 +106,8 @@ html, body {
   position: absolute;
   z-index: 2;
 
-  width: 340px !important;
-  height: 340px !important;
+  width: 380px !important;
+  height: 380px !important;
 
   left: 50%;
   top: 50%;
@@ -127,8 +126,8 @@ html, body {
   position: absolute;
   z-index: 3;
 
-  width: 420px;
-  height: 330px;
+  width: 460px;
+  height: 360px;
 
   top: 50%;
   left: 50%;
@@ -157,22 +156,22 @@ html, body {
    —————————— */
 @media (max-width: 460px) {
   html, body {
-    height: 310px;
+    height: 330px;
   }
   .panel {
-    width: 360px;
-    height: 300px;
+    width: 380px;
+    height: 320px;
   }
   .stars {
-    width: 360px;
-    height: 300px;
+    width: 380px;
+    height: 320px;
   }
   #radarChart {
-    width: 300px !important;
-    height: 300px !important;
+    width: 320px !important;
+    height: 320px !important;
   }
   .wrap::before {
-    width: 280px;
-    height: 280px;
+    width: 300px;
+    height: 300px;
   }
 }
