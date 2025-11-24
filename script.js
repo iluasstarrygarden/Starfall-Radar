@@ -48,7 +48,7 @@ function createRadarChart(labels, rawValues) {
 
   // destroy previous instance if present
   if (window._radarChartInstance) {
-    try { window._radarChartInstance.destroy(); } catch (e) { /* ignore */ }
+    try { window._radarChartInstance.destroy(); } catch (e) {}
     window._radarChartInstance = null;
   }
 
@@ -64,20 +64,17 @@ function createRadarChart(labels, rawValues) {
   grad.addColorStop(0.55, "rgba(255,188,141,0.22)");
   grad.addColorStop(1, "rgba(255,188,141,0.02)");
 
-  // dataset styling:
-  // - pointRadius: 0 removes dots completely
-  // - stronger borderWidth & opacity for the outer line
+  // dataset styling (no points, thin mesh, stronger outline)
   const dataset = {
     label: "Current Stat Points",
     data: values,
     fill: true,
     backgroundColor: grad,
-    borderColor: "rgba(217,138,82,0.92)", // stronger, nearly-opaque outline
-    borderWidth: 0.05,                      // changed to be thinner
-    pointRadius: 0,                        // NO visible point dots
-    pointHoverRadius: 0,                   // no hover dots either
-    tension: 0.08,                         // gentle smoothing
-    // keep hover behaviour subtle
+    borderColor: "rgba(217,138,82,0.92)", // strong outline
+    borderWidth: 1.1,                     // clean & defined
+    pointRadius: 0,                       // NO visible dots
+    pointHoverRadius: 0,
+    tension: 0.08,                        // gentle smoothing
     hoverBorderWidth: 0
   };
 
@@ -117,13 +114,13 @@ function createRadarChart(labels, rawValues) {
           max: chartMax,
           beginAtZero: true,
 
-          // angleLines are the spokes — slightly visible but understated
+          // spokes
           angleLines: {
             color: "rgba(217,138,82,0.20)",
             lineWidth: 1
           },
 
-          // grid is the inner mesh — intentionally subtle so outline stands out
+          // inner mesh grid
           grid: {
             color: "rgba(217,138,82,0.10)",
             lineWidth: 1
